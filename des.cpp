@@ -189,6 +189,30 @@ int main() {
             cout << des_unit(t, k1, false) << endl;
         }
     }
+    string add_padding(string data) {
+    int pad = 64 - (data.length() % 64);
+    if (pad == 64) pad = 0;
+
+    string pad_bin = "";
+    for (int i = 7; i >= 0; i--)
+        pad_bin += ((pad >> i) & 1) + '0';
+
+    while (data.length() % 64 != 0)
+        data += pad_bin;
+
+    return data;
+}
+
+string remove_padding(string data) {
+    if (data.length() < 64) return data;
+
+    string last_byte = data.substr(data.length() - 8);
+    int pad = stoi(last_byte, nullptr, 2);
+
+    if (pad <= 0 || pad > 64) return data;
+
+    return data.substr(0, data.length() - pad * 8);
+}
 
     return 0;
 }
