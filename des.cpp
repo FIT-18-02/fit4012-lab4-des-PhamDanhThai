@@ -187,8 +187,12 @@ int main() {
             result += des_decrypt(data.substr(i,64), keys);
     }
     else if (mode == 3) {
-        string k1,k2,k3;
-        cin >> k1 >> k2 >> k3;
+       string line;
+getline(cin >> ws, line); // đọc cả dòng
+
+stringstream ss(line);
+string k1, k2, k3;
+ss >> k1 >> k2 >> k3;
 
         auto k_1 = generate_keys(k1);
         auto k_2 = generate_keys(k2);
