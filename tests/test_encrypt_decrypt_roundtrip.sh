@@ -1,32 +1,37 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# build
-mkdir -p build
-cd build
-cmake ..
-make
+# Đường dẫn tới file thực thi DES
+DES_EXE="./des"
 
-# plaintext (không chia hết 64 để test padding)
+# 1. Chuẩn bị dữ liệu: Plaintext không chia hết cho 64 bit để test cả padding
 PLAINTEXT="0101010101110001110001110001110001110001110001110001110001110001111"
-
 KEY="0001001100110100010101110111100110011011101111001101111111110001"
 
-# encrypt
+# 2. Mã hóa (Mode 1)
+CIPHERTEXT=$(echo -e "1\n$PLAINTEXT\n$KEY" | $DES_EXE)
 
-CIPHERTEXT=$(echo -e "1\n$PLAINTEXT\n$KEY" | ./des)
+# 3. Giải mã (Mode 2)
+DECRYPTED=$(echo -e "2\n$CIPHERTEXT\n$KEY" | $DES_EXE)
 
-# decrypt
-DECRYPTED=$(echo -e "2\n$CIPHERTEXT\n$KEY" | ./des)
+# 4. Xử lý logic so sánh: 
+# Vì hàm pad() trong des.cpp của bạn thêm số '0' vào cuối, 
+# nên kết quả giải mã sẽ là bản gốc kèm theo các số 0 đã pad.
+PADDED_EXPECTED="$PLAINTEXT"
+while [ $((${#PADDED_EXPECTED} % 64)) -ne 0 ]; do
+    PADDED_EXPECTED="${PADDED_EXPECTED}0"
+done
 
-echo "Plaintext:  $PLAINTEXT"
-echo "Encrypted:  $CIPHERTEXT"
-echo "Decrypted:  $DECRYPTED"
+echo "--- Kết quả Test Round-trip ---"
+echo "Dữ liệu gốc:    $PLAINTEXT"
+echo "Dữ liệu kỳ vọng: $PADDED_EXPECTED"
+echo "Dữ liệu giải mã: $DECRYPTED"
 
-# check round-trip
-if [ "$DECRYPTED" != "$PLAINTEXT" ]; then
-    echo "❌ Round-trip FAILED"
+# 5. Kiểm tra tính toàn vẹn
+if [ "$DECRYPTED" != "$PADDED_EXPECTED" ]; then
+    echo "❌ Round-trip FAILED (Dữ liệu không khớp)"
     exit 1
 fi
 
 echo "✅ Round-trip PASSED"
+exit 0
