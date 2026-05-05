@@ -8,7 +8,7 @@ SRC := des.cpp
 all: $(TARGET)
 
 $(TARGET): $(SRC)
-	$(CXX) $(CXXFLAGS) $(SRC) -o $(TARGET)
+	$(CXX) $(CXXFLAGS) $(SRC) -o $(TARGET
 
 run: $(TARGET)
 	./$(TARGET)
