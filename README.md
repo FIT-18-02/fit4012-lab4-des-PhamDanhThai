@@ -6,13 +6,11 @@
 g++ -std=c++17 -Wall -Wextra -pedantic des.cpp -o des
 ```
 
-
 ### Run / Chạy chương trình
 
 ```bash
 ./des
 ```
-
 ---
 
 ## 2. Input / Đầu vào
