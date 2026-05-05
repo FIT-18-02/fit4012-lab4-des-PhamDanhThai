@@ -1,41 +1,36 @@
 #!/usr/bin/env bash
 set -euo pipefail
 
-# build
-mkdir -p build
-cd build
-cmake ..
-make
+# Đảm bảo đường dẫn tới file thực thi đúng (thường là ./des ở thư mục gốc)
+DES_EXE="./des"
 
 PLAINTEXT="0101010101110001110001110001110001110001110001110001110001110001"
 KEY="0001001100110100010101110111100110011011101111001101111111110001"
 
-# encrypt
-CIPHERTEXT=$(echo -e "1\n$PLAINTEXT\n$KEY" | ./des)
+# 1. Mã hóa bản tin gốc
+CIPHERTEXT=$(echo -e "1\n$PLAINTEXT\n$KEY" | $DES_EXE)
 
-# tamper: flip 1 bit (bit đầu)
+# 2. Làm giả dữ liệu (Tamper): Đảo bit đầu tiên của bản mã
 FIRST_BIT=${CIPHERTEXT:0:1}
-
 if [ "$FIRST_BIT" == "0" ]; then
     FLIPPED="1"
 else
     FLIPPED="0"
 fi
-
 TAMPERED="${FLIPPED}${CIPHERTEXT:1}"
 
-# decrypt tampered ciphertext
-DECRYPTED=$(echo -e "2\n$TAMPERED\n$KEY" | ./des)
+# 3. Giải mã bản mã đã bị thay đổi
+DECRYPTED=$(echo -e "2\n$TAMPERED\n$KEY" | $DES_EXE)
 
+echo "--- Kết quả Test Tamper ---"
 echo "Original plaintext:  $PLAINTEXT"
-echo "Ciphertext:         $CIPHERTEXT"
-echo "Tampered cipher:    $TAMPERED"
-echo "Decrypted tampered: $DECRYPTED"
+echo "Decrypted tampered:  $DECRYPTED"
 
-# check: phải KHÁC plaintext
+# 4. Kiểm tra: Giải mã dữ liệu bị lỗi KHÔNG ĐƯỢC ra bản gốc
 if [ "$DECRYPTED" == "$PLAINTEXT" ]; then
-    echo "❌ Tamper test FAILED (no change detected)"
+    echo "❌ Tamper test FAILED (Dữ liệu bị thay đổi nhưng giải mã vẫn ra đúng - Sai logic DES)"
     exit 1
 fi
 
 echo "✅ Tamper test PASSED"
+exit 0
