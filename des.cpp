@@ -4,9 +4,6 @@
 #include <algorithm>
 
 using namespace std;
-
-
-
 string xor_strings(string a, string b) {
     string res = "";
     for (size_t i = 0; i < a.length(); i++)
@@ -118,7 +115,7 @@ int S[8][4][16] = {
 }
 };
 
-// helper
+
 string permute(string in, int* table, int n) {
     string out = "";
     for (int i = 0; i < n; i++) out += in[table[i]-1];
