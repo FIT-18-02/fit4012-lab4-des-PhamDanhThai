@@ -188,25 +188,22 @@ int main() {
             result += des_decrypt(data.substr(i,64), keys);
     }
     else if (mode == 3) {
-       string line;
-getline(cin >> ws, line); // đọc cả dòng
+    string k1, k2, k3;
+    cin >> k1 >> k2 >> k3;   // 🔥 ĐỌC 3 DÒNG CHUẨN
 
-stringstream ss(line);
-string k1, k2, k3;
-ss >> k1 >> k2 >> k3;
+    auto k_1 = generate_keys(k1);
+    auto k_2 = generate_keys(k2);
+    auto k_3 = generate_keys(k3);
 
-        auto k_1 = generate_keys(k1);
-        auto k_2 = generate_keys(k2);
-        auto k_3 = generate_keys(k3);
+    for (int i = 0; i < data.size(); i += 64) {
+        string b = data.substr(i,64);
 
-        for (int i = 0; i < data.size(); i += 64) {
-            string b = data.substr(i,64);
-            b = des_encrypt(b, k_1);
-            b = des_decrypt(b, k_2);
-            b = des_encrypt(b, k_3);
-            result += b;
-        }
+        b = des_encrypt(b, k_1);
+        b = des_decrypt(b, k_2);
+        b = des_encrypt(b, k_3);
+
+        result += b;
     }
-
+}
     cout << result;
 }
