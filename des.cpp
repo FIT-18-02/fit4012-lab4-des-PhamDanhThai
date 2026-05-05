@@ -145,8 +145,9 @@ string des_encrypt(string block, vector<string> keys) {
 }
 
 string des_decrypt(string block, vector<string> keys) {
-    reverse(keys.begin(), keys.end());
-    return des_encrypt(block, keys);
+    vector<string> rev_keys = keys;
+    reverse(rev_keys.begin(), rev_keys.end());
+    return des_encrypt(block, rev_keys);
 }
 
 // ===== PADDING =====
