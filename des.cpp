@@ -106,7 +106,6 @@ string shift_left(string k, int shifts) {
 vector<string> generate_keys(string key) {
     vector<string> round_keys;
     key = permute(key, PC1, 56);
-
     string L = key.substr(0,28), R = key.substr(28,28);
 
     for (int i = 0; i < 16; i++) {
@@ -141,7 +140,6 @@ string des_encrypt(string block, vector<string> keys) {
         R = xor_strings(L, f(R, keys[i]));
         L = tmp;
     }
-
     return permute(R+L, FP, 64);
 }
 
@@ -164,12 +162,9 @@ int main() {
 
     int mode;
     string data;
+    cin >> mode >> data;
 
-    cin >> mode;
-    cin >> data;
-
-    data = add_padding(data);
-
+    data = pad(data);
     string result = "";
 
     if (mode == 1) {
@@ -190,9 +185,7 @@ int main() {
     }
     else if (mode == 3) {
         string k1,k2,k3;
-        cin >> k1;
-        cin >> k2;
-        cin >> k3;
+        cin >> k1 >> k2 >> k3;
 
         auto k_1 = generate_keys(k1);
         auto k_2 = generate_keys(k2);
