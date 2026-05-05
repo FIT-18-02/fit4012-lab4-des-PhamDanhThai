@@ -8,7 +8,7 @@ set(CMAKE_CXX_EXTENSIONS OFF)
 
 add_executable(des des.cpp)
 
-target_compile_options(des PRIVATE -Wall -Wextra -pedantic)
+target_compile_options(des PRIVATE -Wall -Wextra)
 
 
 # target_include_directories(des PRIVATE ${CMAKE_CURRENT_SOURCE_DIR})
