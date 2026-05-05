@@ -1,50 +1,27 @@
-import sys
+#!/usr/bin/env bash
+set -euo pipefail
+source .github/grading/common.sh
 
-BLOCK_SIZE = 64
+LONG_PLAINTEXT="00010010001101000101011001111000100110101011110011011110111100011010101010101010"
+KEY="0001001100110100010101110111100110011011101111001101111111110001"
+EXPECTED="01111110101111110100010010010011001000111111101011111010111110000100000010010001101001000010011111010110110001100000111000110100"
 
-# ===== ZERO PADDING =====
-def zero_pad(s):
-    if len(s) % BLOCK_SIZE != 0:
-        s += '0' * (BLOCK_SIZE - len(s) % BLOCK_SIZE)
-    return s
+if [[ ! -x ./des ]]; then
+  g++ -std=c++17 -Wall -Wextra -pedantic des.cpp -o des
+fi
 
-# ===== SPLIT BLOCK =====
-def split_blocks(s):
-    return [s[i:i+BLOCK_SIZE] for i in range(0, len(s), BLOCK_SIZE)]
+OUTPUT=$(timeout 10s bash -lc 'printf "1\n%s\n%s\n" "$0" "$1" | ./des' "$LONG_PLAINTEXT" "$KEY" 2>&1 || true)
+ACTUAL=$(extract_last_binary "$OUTPUT")
 
-# ===== HÀM MÃ HÓA 1 BLOCK =====
-def encrypt_block(block, key):
-    # 🔥 QUAN TRỌNG:
-    # 👉 DÁN CODE DES CỦA BẠN VÀO ĐÂY
-    # 👉 Hàm phải trả về CHUỖI 64 BIT
+if [[ -z "$ACTUAL" ]]; then
+  fail "Không đọc được kết quả nhị phân từ output. Q2 cần hỗ trợ nhập từ bàn phím theo contract mode=1, rồi in ra ciphertext cuối cùng."
+fi
 
-    # Ví dụ placeholder (KHÔNG dùng khi nộp):
-    return ''.join('1' if block[i] != key[i % len(key)] else '0' for i in range(64))
+if [[ "$ACTUAL" != "$EXPECTED" ]]; then
+  echo "--- Output chương trình ---"
+  printf '%s\n' "$OUTPUT"
+  echo "---------------------------"
+  fail "Q2 chưa đạt. Auto-check yêu cầu mode 1 nhận plaintext >64 bit + key từ stdin và mã hóa multi-block với zero padding đúng."
+fi
 
-
-# ===== MAIN =====
-def main():
-    # ✅ ĐỌC stdin đúng chuẩn auto-check
-    data = sys.stdin.read().strip().split()
-    if len(data) < 2:
-        return
-
-    plaintext = data[0]
-    key = data[1]
-
-    # ✅ ZERO PADDING
-    plaintext = zero_pad(plaintext)
-
-    # ✅ MULTI-BLOCK
-    blocks = split_blocks(plaintext)
-
-    result = ""
-    for b in blocks:
-        result += encrypt_block(b, key)
-
-    # ✅ OUTPUT 1 DÒNG DUY NHẤT (CỰC QUAN TRỌNG)
-    print(result, end="")   # ❌ KHÔNG xuống dòng
-
-
-if __name__ == "__main__":
-    main()
+pass "Q2 đạt: có nhập từ bàn phím và xử lý multi-block + zero padding đúng theo vector kiểm thử."
