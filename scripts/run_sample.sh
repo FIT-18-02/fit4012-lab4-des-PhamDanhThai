@@ -8,6 +8,7 @@ g++ -std=c++17 -Wall -Wextra -pedantic des.cpp -o des
 echo "=== Run DES Program ===" > logs/run
 ./des >> logs/run
 
+
 echo "" >> logs/run
 echo "=== Round-trip Test ===" >> logs/run
 echo "Input: hello" >> logs/run
