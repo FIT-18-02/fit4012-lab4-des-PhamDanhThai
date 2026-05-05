@@ -1,15 +1,17 @@
 #include <bits/stdc++.h>
 using namespace std;
 
-// ===== BASIC =====
+// ===== BASIC FUNCTIONS =====
+// Hàm thực hiện phép XOR giữa hai chuỗi nhị phân
 string xor_strings(string a, string b) {
     string res = "";
-    for (size_t i = 0; i < a.size(); i++) // Đã sửa int -> size_t
+    for (size_t i = 0; i < a.size(); i++) { // Sử dụng size_t để tránh warning
         res += (a[i] == b[i] ? '0' : '1');
+    }
     return res;
 }
 
-// ===== TABLE =====
+// ===== TABLES & S-BOXES =====
 int IP[64] = {58,50,42,34,26,18,10,2,60,52,44,36,28,20,12,4,
 62,54,46,38,30,22,14,6,64,56,48,40,32,24,16,8,
 57,49,41,33,25,17,9,1,59,51,43,35,27,19,11,3,
@@ -48,43 +50,18 @@ int PC2[48] = {14,17,11,24,1,5,3,28,
 
 int shift_table[16] = {1,1,2,2,2,2,2,2,1,2,2,2,2,2,2,1};
 
-// ===== S-BOX =====
 int S[8][4][16] = {
-{{14,4,13,1,2,15,11,8,3,10,6,12,5,9,0,7},
-{0,15,7,4,14,2,13,1,10,6,12,11,9,5,3,8},
-{4,1,14,8,13,6,2,11,15,12,9,7,3,10,5,0},
-{15,12,8,2,4,9,1,7,5,11,3,14,10,0,6,13}},
-{{15,1,8,14,6,11,3,4,9,7,2,13,12,0,5,10},
-{3,13,4,7,15,2,8,14,12,0,1,10,6,9,11,5},
-{0,14,7,11,10,4,13,1,5,8,12,6,9,3,2,15},
-{13,8,10,1,3,15,4,2,11,6,7,12,0,5,14,9}},
-{{10,0,9,14,6,3,15,5,1,13,12,7,11,4,2,8},
-{13,7,0,9,3,4,6,10,2,8,5,14,12,11,15,1},
-{13,6,4,9,8,15,3,0,11,1,2,12,5,10,14,7},
-{1,10,13,0,6,9,8,7,4,15,14,3,11,5,2,12}},
-{{7,13,14,3,0,6,9,10,1,2,8,5,11,12,4,15},
-{13,8,11,5,6,15,0,3,4,7,2,12,1,10,14,9},
-{10,6,9,0,12,11,7,13,15,1,3,14,5,2,8,4},
-{3,15,0,6,10,1,13,8,9,4,5,11,12,7,2,14}},
-{{2,12,4,1,7,10,11,6,8,5,3,15,13,0,14,9},
-{14,11,2,12,4,7,13,1,5,0,15,10,3,9,8,6},
-{4,2,1,11,10,13,7,8,15,9,12,5,6,3,0,14},
-{11,8,12,7,1,14,2,13,6,15,0,9,10,4,5,3}},
-{{12,1,10,15,9,2,6,8,0,13,3,4,14,7,5,11},
-{10,15,4,2,7,12,9,5,6,1,13,14,0,11,3,8},
-{9,14,15,5,2,8,12,3,7,0,4,10,1,13,11,6},
-{4,3,2,12,9,5,15,10,11,14,1,7,6,0,8,13}},
-{{4,11,2,14,15,0,8,13,3,12,9,7,5,10,6,1},
-{13,0,11,7,4,9,1,10,14,3,5,12,2,15,8,6},
-{1,4,11,13,12,3,7,14,10,15,6,8,0,5,9,2},
-{6,11,13,8,1,4,10,7,9,5,0,15,14,2,3,12}},
-{{13,2,8,4,6,15,11,1,10,9,3,14,5,0,12,7},
-{1,15,13,8,10,3,7,4,12,5,6,11,0,14,9,2},
-{7,11,4,1,9,12,14,2,0,6,10,13,15,3,5,8},
-{2,1,14,7,4,10,8,13,15,12,9,0,3,5,6,11}}
+{{14,4,13,1,2,15,11,8,3,10,6,12,5,9,0,7},{0,15,7,4,14,2,13,1,10,6,12,11,9,5,3,8},{4,1,14,8,13,6,2,11,15,12,9,7,3,10,5,0},{15,12,8,2,4,9,1,7,5,11,3,14,10,0,6,13}},
+{{15,1,8,14,6,11,3,4,9,7,2,13,12,0,5,10},{3,13,4,7,15,2,8,14,12,0,1,10,6,9,11,5},{0,14,7,11,10,4,13,1,5,8,12,6,9,3,2,15},{13,8,10,1,3,15,4,2,11,6,7,12,0,5,14,9}},
+{{10,0,9,14,6,3,15,5,1,13,12,7,11,4,2,8},{13,7,0,9,3,4,6,10,2,8,5,14,12,11,15,1},{13,6,4,9,8,15,3,0,11,1,2,12,5,10,14,7},{1,10,13,0,6,9,8,7,4,15,14,3,11,5,2,12}},
+{{7,13,14,3,0,6,9,10,1,2,8,5,11,12,4,15},{13,8,11,5,6,15,0,3,4,7,2,12,1,10,14,9},{10,6,9,0,12,11,7,13,15,1,3,14,5,2,8,4},{3,15,0,6,10,1,13,8,9,4,5,11,12,7,2,14}},
+{{2,12,4,1,7,10,11,6,8,5,3,15,13,0,14,9},{14,11,2,12,4,7,13,1,5,0,15,10,3,9,8,6},{4,2,1,11,10,13,7,8,15,9,12,5,6,3,0,14},{11,8,12,7,1,14,2,13,6,15,0,9,10,4,5,3}},
+{{12,1,10,15,9,2,6,8,0,13,3,4,14,7,5,11},{10,15,4,2,7,12,9,5,6,1,13,14,0,11,3,8},{9,14,15,5,2,8,12,3,7,0,4,10,1,13,11,6},{4,3,2,12,9,5,15,10,11,14,1,7,6,0,8,13}},
+{{4,11,2,14,15,0,8,13,3,12,9,7,5,10,6,1},{13,0,11,7,4,9,1,10,14,3,5,12,2,15,8,6},{1,4,11,13,12,3,7,14,10,15,6,8,0,5,9,2},{6,11,13,8,1,4,10,7,9,5,0,15,14,2,3,12}},
+{{13,2,8,4,6,15,11,1,10,9,3,14,5,0,12,7},{1,15,13,8,10,3,7,4,12,5,6,11,0,14,9,2},{7,11,4,1,9,12,14,2,0,6,10,13,15,3,5,8},{2,1,14,7,4,10,8,13,15,12,9,0,3,5,6,11}}
 };
 
-// ===== CORE =====
+// ===== CORE LOGIC =====
 string permute(string in, int* table, int n) {
     string out = "";
     for (int i = 0; i < n; i++) out += in[table[i]-1];
@@ -92,19 +69,18 @@ string permute(string in, int* table, int n) {
 }
 
 string shift_left(string k, int shifts) {
-    rotate(k.begin(), k.begin()+shifts, k.end());
+    rotate(k.begin(), k.begin() + shifts, k.end());
     return k;
 }
 
 vector<string> generate_keys(string key) {
     vector<string> round_keys;
     key = permute(key, PC1, 56);
-    string L = key.substr(0,28), R = key.substr(28,28);
-
+    string L = key.substr(0, 28), R = key.substr(28, 28);
     for (int i = 0; i < 16; i++) {
         L = shift_left(L, shift_table[i]);
         R = shift_left(R, shift_table[i]);
-        round_keys.push_back(permute(L+R, PC2, 48));
+        round_keys.push_back(permute(L + R, PC2, 48));
     }
     return round_keys;
 }
@@ -112,28 +88,27 @@ vector<string> generate_keys(string key) {
 string sbox_sub(string input) {
     string output = "";
     for (int i = 0; i < 8; i++) {
-        string block = input.substr(i*6,6);
-        int row = (block[0]-'0')*2 + (block[5]-'0');
-        int col = stoi(block.substr(1,4), nullptr, 2);
+        string block = input.substr(i * 6, 6);
+        int row = (block[0] - '0') * 2 + (block[5] - '0');
+        int col = stoi(block.substr(1, 4), nullptr, 2);
         output += bitset<4>(S[i][row][col]).to_string();
     }
     return output;
 }
 
 string f(string R, string K) {
-    return permute(sbox_sub(xor_strings(permute(R,E,48),K)),P,32);
+    return permute(sbox_sub(xor_strings(permute(R, E, 48), K)), P, 32);
 }
 
 string des_encrypt(string block, vector<string> keys) {
     block = permute(block, IP, 64);
-    string L = block.substr(0,32), R = block.substr(32,32);
-
+    string L = block.substr(0, 32), R = block.substr(32, 32);
     for (int i = 0; i < 16; i++) {
         string tmp = R;
         R = xor_strings(L, f(R, keys[i]));
         L = tmp;
     }
-    return permute(R+L, FP, 64);
+    return permute(R + L, FP, 64);
 }
 
 string des_decrypt(string block, vector<string> keys) {
@@ -142,67 +117,67 @@ string des_decrypt(string block, vector<string> keys) {
     return des_encrypt(block, rev);
 }
 
-// ===== PADDING =====
-string pad(string s) {
+// ===== PADDING FUNCTIONS =====
+// Định nghĩa hàm pad bên ngoài main để tránh lỗi cú pháp
+string add_padding(string s) {
     while (s.size() % 64 != 0) s += '0';
     return s;
 }
 
-// ===== MAIN =====
+// ===== MAIN PROGRAM =====
 int main() {
     ios::sync_with_stdio(false);
     cin.tie(nullptr);
 
     int mode;
     string data;
+    // Nhập mode và dữ liệu từ bàn phím theo yêu cầu Q2
     if (!(cin >> mode >> data)) return 0;
 
-    data = pad(data);
+    data = add_padding(data);
     string result = "";
 
-    if (mode == 1) {
+    if (mode == 1) { // DES Encrypt
         string k; cin >> k;
         auto keys = generate_keys(k);
         for (size_t i = 0; i < data.size(); i += 64)
-            result += des_encrypt(data.substr(i,64), keys);
+            result += des_encrypt(data.substr(i, 64), keys);
     }
-    else if (mode == 2) {
+    else if (mode == 2) { // DES Decrypt
         string k; cin >> k;
         auto keys = generate_keys(k);
         for (size_t i = 0; i < data.size(); i += 64)
-            result += des_decrypt(data.substr(i,64), keys);
+            result += des_decrypt(data.substr(i, 64), keys);
     }
-    else if (mode == 3) {
+    else if (mode == 3) { // TripleDES Encrypt
         string k1, k2, k3;
         cin >> k1 >> k2 >> k3;
-        auto k_1 = generate_keys(k1);
-        auto k_2 = generate_keys(k2);
-        auto k_3 = generate_keys(k3);
-
+        auto keys1 = generate_keys(k1);
+        auto keys2 = generate_keys(k2);
+        auto keys3 = generate_keys(k3);
         for (size_t i = 0; i < data.size(); i += 64) {
-            string b = data.substr(i,64);
-            b = des_encrypt(b, k_1);
-            b = des_decrypt(b, k_2);
-            b = des_encrypt(b, k_3);
+            string b = data.substr(i, 64);
+            b = des_encrypt(b, keys1);
+            b = des_decrypt(b, keys2);
+            b = des_encrypt(b, keys3);
             result += b;
         }
     }
-    else if (mode == 4) {
+    else if (mode == 4) { // TripleDES Decrypt
         string k1, k2, k3;
         cin >> k1 >> k2 >> k3;
-        auto k_1 = generate_keys(k1);
-        auto k_2 = generate_keys(k2);
-        auto k_3 = generate_keys(k3);
-
+        auto keys1 = generate_keys(k1);
+        auto keys2 = generate_keys(k2);
+        auto keys3 = generate_keys(k3);
         for (size_t i = 0; i < data.size(); i += 64) {
-            string b = data.substr(i,64);
-            b = des_decrypt(b, k_3);
-            b = des_encrypt(b, k_2);
-            b = des_decrypt(b, k_1);
+            string b = data.substr(i, 64);
+            b = des_decrypt(b, keys3);
+            b = des_encrypt(b, keys2);
+            b = des_decrypt(b, keys1);
             result += b;
         }
     }
 
-    cout << result << endl;
+    cout << result << endl; // In kết quả ra màn hình
     return 0;
 }
