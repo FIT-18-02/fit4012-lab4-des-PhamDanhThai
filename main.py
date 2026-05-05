@@ -1,5 +1,6 @@
 import sys
 
+
 BLOCK_SIZE = 64
 
 def zero_pad(s):
@@ -14,6 +15,10 @@ def encrypt_block(block, key):
     result = ""
     for i in range(64):
         result += '1' if block[i] != key[i % len(key)] else '0'
+
+    if len(result) != 64:
+        result = result[:64].ljust(64, '0')
+
     return result
 
 def main():
@@ -29,7 +34,12 @@ def main():
 
     result = ""
     for b in blocks:
-        result += encrypt_block(b, key)
+        cipher = encrypt_block(b, key)
+
+        if len(cipher) != 64:
+            cipher = cipher[:64].ljust(64, '0')
+
+        result += cipher
 
     print(result, end="")
 
