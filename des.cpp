@@ -198,6 +198,25 @@ int main() {
             b = des_encrypt(b, k_3);
             result += b;
         }
+        else if (mode == 4) {
+    string k1, k2, k3;
+    cin >> k1 >> k2 >> k3;
+
+    auto k_1 = generate_keys(k1);
+    auto k_2 = generate_keys(k2);
+    auto k_3 = generate_keys(k3);
+
+    for (int i = 0; i < data.size(); i += 64) {
+        string b = data.substr(i,64);
+
+        // 🔥 Triple DES DECRYPT (DED)
+        b = des_decrypt(b, k_3);
+        b = des_encrypt(b, k_2);
+        b = des_decrypt(b, k_1);
+
+        result += b;
+    }
+}
     }
 
     cout << result;
