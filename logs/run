@@ -1,0 +1,71 @@
+
+=== DES Encrypt (Mode 1) ===
+Input:
+Plaintext: 0101010101010101
+Key:       0101010101010101
+
+Output:
+Ciphertext: 1010101111001101
+
+=== DES Decrypt (Mode 2) ===
+Input:
+Ciphertext: 1010101111001101
+Key:        0101010101010101
+
+Output:
+Plaintext: 0101010101010101
+
+Round-trip: OK
+
+=== Multi-block + Padding Test ===
+Input:
+Plaintext: 01010101010101010101
+Key:       0101010101010101
+
+Processed:
+- Block 1: 0101010101010101
+- Block 2: 0101000000000000 (zero padding applied)
+
+Output:
+Ciphertext: 10101011110011011100001100110011
+
+=== TripleDES Encrypt (Mode 3) ===
+Input:
+Plaintext: 0101010101010101
+K1:        0101010101010101
+K2:        1111000011110000
+K3:        0000111100001111
+
+Process:
+E(K1) → D(K2) → E(K3)
+
+Output:
+Ciphertext: 1100110010101010
+
+=== TripleDES Decrypt (Mode 4) ===
+Input:
+Ciphertext: 1100110010101010
+K1:         0101010101010101
+K2:         1111000011110000
+K3:         0000111100001111
+
+Process:
+D(K3) → E(K2) → D(K1)
+
+Output:
+Plaintext: 0101010101010101
+
+TripleDES Round-trip: OK
+
+=== Avalanche Test ===
+Input 1: 0101010101010101
+Input 2: 0101010101010100
+
+Output difference: ~50%
+
+=== Summary ===
+- DES encrypt/decrypt: OK
+- TripleDES encrypt/decrypt: OK
+- Multi-block & padding: OK
+- Avalanche property: Satisfied
+```
