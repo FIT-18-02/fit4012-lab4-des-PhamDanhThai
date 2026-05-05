@@ -141,13 +141,14 @@ string des_encrypt(string block, vector<string> keys) {
         R = xor_strings(L, f(R, keys[i]));
         L = tmp;
     }
+
     return permute(R+L, FP, 64);
 }
 
 string des_decrypt(string block, vector<string> keys) {
-    vector<string> rev_keys = keys;
-    reverse(rev_keys.begin(), rev_keys.end());
-    return des_encrypt(block, rev_keys);
+    vector<string> rev = keys;
+    reverse(rev.begin(), rev.end());
+    return des_encrypt(block, rev);
 }
 
 // ===== PADDING =====
@@ -162,12 +163,12 @@ int main() {
     cin.tie(nullptr);
 
     int mode;
-    cin >> mode;
-
     string data;
+
+    cin >> mode;
     cin >> data;
 
-    data = pad(data);
+    data = add_padding(data);
 
     string result = "";
 
@@ -187,26 +188,24 @@ int main() {
         for (int i = 0; i < data.size(); i += 64)
             result += des_decrypt(data.substr(i,64), keys);
     }
-   else if (mode == 3) {
-    string k1, k2, k3;
+    else if (mode == 3) {
+        string k1,k2,k3;
+        cin >> k1;
+        cin >> k2;
+        cin >> k3;
 
-    cin >> k1;
-    cin >> k2;
-    cin >> k3;
+        auto k_1 = generate_keys(k1);
+        auto k_2 = generate_keys(k2);
+        auto k_3 = generate_keys(k3);
 
-    auto k_1 = generate_keys(k1);
-    auto k_2 = generate_keys(k2);
-    auto k_3 = generate_keys(k3);
-
-    for (int i = 0; i < data.size(); i += 64) {
-        string b = data.substr(i,64);
-
-        b = des_encrypt(b, k_1);
-        b = des_decrypt(b, k_2);
-        b = des_encrypt(b, k_3);
-
-        result += b;
+        for (int i = 0; i < data.size(); i += 64) {
+            string b = data.substr(i,64);
+            b = des_encrypt(b, k_1);
+            b = des_decrypt(b, k_2);
+            b = des_encrypt(b, k_3);
+            result += b;
+        }
     }
-}
+
     cout << result;
 }
